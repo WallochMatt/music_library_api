@@ -1,6 +1,8 @@
 from platform import release
 from django.db import models
 
+from music_library_project import settings
+
 # Create your models here.
 
 class Song(models.Model):
