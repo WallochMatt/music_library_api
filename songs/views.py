@@ -1,3 +1,4 @@
+from functools import partial
 from os import stat
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -21,7 +22,7 @@ def songs_list(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE', 'PATCH'])
 def songs_detailed(request, pk):
     song = get_object_or_404(Song, pk=pk)
     if request.method == 'GET':
@@ -37,3 +38,11 @@ def songs_detailed(request, pk):
     elif request.method == 'DELETE':
         song.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    #add PATCH for likes here
+    elif request.method == 'PATCH':
+        song.likes += 1
+        serializer = SongSerializer(song, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
